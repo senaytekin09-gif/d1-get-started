@@ -1,25 +1,19 @@
-// test/index.spec.ts
-import { env, createExecutionContext, waitOnExecutionContext, SELF } from 'cloudflare:test';
-import { describe, it, expect } from 'vitest';
-import worker from '../src/index';
+import { SELF } from "cloudflare:test";
+import { describe, expect, it } from "vitest";
 
-// For now, you'll need to do something like this to get a correctly-typed
-// `Request` to pass to `worker.fetch()`.
-const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
-
-describe('Hello World worker', () => {
-	it('responds with Hello World! (unit style)', async () => {
-		const request = new IncomingRequest('http://example.com');
-		// Create an empty context to pass to `worker.fetch()`.
-		const ctx = createExecutionContext();
-		const response = await worker.fetch(request, env, ctx);
-		// Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
-		await waitOnExecutionContext(ctx);
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
-	});
-
-	it('responds with Hello World! (integration style)', async () => {
-		const response = await SELF.fetch('https://example.com');
-		expect(await response.text()).toMatchInlineSnapshot(`"Hello World!"`);
-	});
+describe("Ereğli Ticaret Borsası portal worker", () => {
+  it("serves the Turkish portal", async () => {
+    const response = await SELF.fetch("https://example.com/");
+    const html = await response.text();
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(html).toContain("Ereğli Ticaret Borsası");
+    expect(html).toContain("Müstahsil Tescil Başvurusu");
+    expect(html).toContain("admin@demo.test");
+  });
+  it("reports health and returns 404", async () => {
+    const health = await SELF.fetch("https://example.com/health");
+    expect(await health.json()).toEqual({ ok: true, service: "eregli-ticaret-borsasi-demo" });
+    expect((await SELF.fetch("https://example.com/olmayan")).status).toBe(404);
+  });
 });
