@@ -4,19 +4,12 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "d1-get-started",
+	"name": "eregli-borsasi-satis-salonu",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-04-30",
 	"observability": {
 		"enabled": true
 	},
-	"d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "prod-d1-tutorial",
-      "database_id": "01f2ae19-ebb4-4954-a5f6-9b34ad1dbbe3"
-    }
-  ]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
